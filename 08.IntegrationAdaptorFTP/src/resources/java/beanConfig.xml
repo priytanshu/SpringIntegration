@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-ftp="http://www.springframework.org/schema/integration/ftp"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration/ftp http://www.springframework.org/schema/integration/ftp/spring-integration-ftp-4.1.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd">
+
+
+
+	<int:channel id="ftpChannel" />
+
+	<int:service-activator input-channel="ftpChannel"
+		ref="firstMessageService" method="recieveMessage" />
+	<bean id="firstMessageService" class="com.spring.integration.service.FirstMessageService"></bean>
+
+
+	<int-ftp:inbound-channel-adapter
+		session-factory="ftpSessionFactory" local-directory="D:\Demo" channel="ftpChannel"
+		remote-directory="/">
+		<int:poller fixed-rate="1000"></int:poller>
+	</int-ftp:inbound-channel-adapter>
+
+
+	<bean id="ftpSessionFactory"
+		class="org.springframework.integration.ftp.session.DefaultFtpSessionFactory">
+		<property name="host" value="10.102.100.158" />
+		<property name="username" value="admin" />
+		<property name="password" value="password" />
+	</bean>
+
+</beans>
